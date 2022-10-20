@@ -4,7 +4,6 @@ import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 import { Link, useHistory } from 'react-router-dom';
-import api from '../../services/Api';
 
 import { useToast } from '../../hooks/toast';
 
@@ -15,20 +14,34 @@ import { Container, Content, Background, AnimationContainer } from './styles';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import getValidationErrors from '../../utils/getValidationErrors';
-
-interface SignUpFormData {
-  name: string;
-  email: string;
-  password: string;
-}
+import User from '../../models/User';
+import UserService from '../../services/UserService';
 
 const SignUp: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
   const history = useHistory();
 
+  const onSuccess = () => {
+    history.push('/signin');
+
+    addToast({
+      type: 'success',
+      title: 'Cadastro realizado!',
+      description: 'Você já pode fazer seu login no FHP.',
+    });
+  };
+
+  const onError = () => {
+    addToast({
+      type: 'error',
+      title: 'Erro no cadastro',
+      description: 'Ocorreu um erro ao realizar seu cadastro, tente novamente.',
+    });
+  };
+
   const handleSubmit = useCallback(
-    async (data: SignUpFormData) => {
+    async (data: User) => {
       try {
         formRef.current?.setErrors({});
 
@@ -40,15 +53,10 @@ const SignUp: React.FC = () => {
         await schema.validate(data, {
           abortEarly: false,
         });
-        await api.post('/users', data);
 
-        history.push('/');
+        const response = await UserService.create(data);
 
-        addToast({
-          type: 'success',
-          title: 'Cadastro realizado!',
-          description: 'Você já pode fazer seu login no FHP.',
-        });
+        response ? onSuccess() : onError();
       } catch (err: Yup.ValidationError | any) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
@@ -58,11 +66,7 @@ const SignUp: React.FC = () => {
           return;
         }
 
-        addToast({
-          type: 'error',
-          title: 'Erro no cadastro',
-          description: 'Ocorreu um erro ao fazer o cadastro, tente novamente.',
-        });
+        onError();
       }
     },
     [addToast, history],
