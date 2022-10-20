@@ -3,8 +3,7 @@ import UserAuth from './UserAuth';
 
 export default interface AuthContextData {
   user: UserAuth;
-  signIn(credentials: User): Promise<void>;
+  personCpf?: string;
+  signIn(credentials: User): Promise<boolean>;
   signOut(): void;
-  getCpf(): string | undefined;
-  doesUserHavePersonalData(): boolean;
 }

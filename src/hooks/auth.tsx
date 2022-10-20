@@ -27,25 +27,29 @@ const AuthProvider: React.FC = ({ children }) => {
     return {} as AuthState;
   });
 
-  const signIn = useCallback(async ({ username, password }) => {
-    const authState = await SessionService.create({ username, password });
+  const signIn = useCallback(
+    async ({ username, password }): Promise<boolean> => {
+      const authState = await SessionService.create({ username, password });
 
-    if (!authState) {
-      setData({} as AuthState);
-      return;
-    }
+      if (!authState) {
+        setData({} as AuthState);
+        return false;
+      }
 
-    const { user, token, personCpf } = authState;
+      const { user, token, personCpf } = authState;
 
-    localStorage.setItem('@FHP:user', JSON.stringify(user));
-    localStorage.setItem('@FHP:token', token);
+      localStorage.setItem('@FHP:user', JSON.stringify(user));
+      localStorage.setItem('@FHP:token', token);
 
-    if (personCpf) {
-      localStorage.setItem('@FHP:personCpf', personCpf);
-    }
+      if (personCpf) {
+        localStorage.setItem('@FHP:personCpf', personCpf);
+      }
 
-    setData({ token, user });
-  }, []);
+      setData({ token, user, personCpf });
+      return true;
+    },
+    [],
+  );
 
   const signOut = useCallback(() => {
     localStorage.removeItem('@FHP:user');
@@ -55,22 +59,13 @@ const AuthProvider: React.FC = ({ children }) => {
     setData({} as AuthState);
   }, []);
 
-  const getCpf = (): string | undefined => {
-    return data?.personCpf;
-  };
-
-  const doesUserHavePersonalData = (): boolean => {
-    return !!data?.personCpf;
-  };
-
   return (
     <AuthContext.Provider
       value={{
         user: data.user,
+        personCpf: data?.personCpf,
         signIn,
         signOut,
-        getCpf,
-        doesUserHavePersonalData,
       }}
     >
       {children}
