@@ -15,12 +15,12 @@ const Dashboard: React.FC = () => {
   const [redirect, setRedirect] = useState<string>();
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
 
-  const { doesUserHavePersonalData } = useAuth();
+  const { user, personCpf } = useAuth();
 
   const PATH_PREFIX = '/dashboard';
 
   useEffect(() => {
-    const disable = !doesUserHavePersonalData();
+    const disable = !personCpf;
 
     setMenuItems([
       { title: 'Dados Pessoais', linkTo: `${PATH_PREFIX}/dadosPessoais` },
@@ -40,7 +40,7 @@ const Dashboard: React.FC = () => {
         disable,
       },
     ]);
-  }, [doesUserHavePersonalData]);
+  }, [user, personCpf]);
 
   useEffect(() => {
     if (window.location.href.endsWith('/dashboard')) {
