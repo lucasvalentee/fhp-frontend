@@ -1,65 +1,78 @@
 import React, { useCallback, createContext, useState, useContext } from 'react';
-import api from '../services/Api';
-
-interface SignInCredentials {
-  username: string;
-  password: string;
-}
-
-interface AuthContextData {
-  user: IUserAuth;
-  signIn(credentials: SignInCredentials): Promise<void>;
-  signOut(): void;
-}
-
-interface IUserAuth {
-  username: string;
-}
-
-interface AuthState {
-  token: string;
-  user: IUserAuth;
-}
+import AuthContextData from '../models/AuthContextData';
+import AuthState from '../models/AuthState';
+import SessionService from '../services/SessionService';
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 const AuthProvider: React.FC = ({ children }) => {
   const [data, setData] = useState<AuthState>(() => {
-    const token = localStorage.getItem('@FHP:token');
     const user = localStorage.getItem('@FHP:user');
+    const token = localStorage.getItem('@FHP:token');
+    const personCpf = localStorage.getItem('@FHP:personCpf');
 
     if (token && user) {
-      return {
+      const authState = {
         token,
         user: JSON.parse(user),
       };
+
+      if (personCpf) {
+        Object.assign(authState, { personCpf });
+      }
+
+      return authState;
     }
 
     return {} as AuthState;
   });
 
   const signIn = useCallback(async ({ username, password }) => {
-    const response = await api.post('sessions', { username, password });
+    const authState = await SessionService.create({ username, password });
 
-    console.log({ response });
+    if (!authState) {
+      setData({} as AuthState);
+      return;
+    }
 
-    const { token, user } = response.data;
+    const { user, token, personCpf } = authState;
 
-    localStorage.setItem('@FHP:token', token);
     localStorage.setItem('@FHP:user', JSON.stringify(user));
+    localStorage.setItem('@FHP:token', token);
+
+    if (personCpf) {
+      localStorage.setItem('@FHP:personCpf', personCpf);
+    }
 
     setData({ token, user });
   }, []);
 
   const signOut = useCallback(() => {
-    localStorage.removeItem('@FHP:token');
     localStorage.removeItem('@FHP:user');
+    localStorage.removeItem('@FHP:token');
+    localStorage.removeItem('@FHP:personCpf');
 
     setData({} as AuthState);
   }, []);
 
+  const getCpf = (): string | undefined => {
+    return data?.personCpf;
+  };
+
+  const doesUserHavePersonalData = (): boolean => {
+    return !!data?.personCpf;
+  };
+
   return (
-    <AuthContext.Provider value={{ user: data.user, signIn, signOut }}>
+    <AuthContext.Provider
+      value={{
+        user: data.user,
+        signIn,
+        signOut,
+        getCpf,
+        doesUserHavePersonalData,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
