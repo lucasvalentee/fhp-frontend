@@ -8,18 +8,12 @@ import { Link, useHistory } from 'react-router-dom';
 import getValidationErrors from '../../utils/getValidationErrors';
 import { useAuth } from '../../hooks/auth';
 
-import logoImg from '../../assets/logo.svg';
-
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
 import { Container, Content, Background, AnimationContainer } from './styles';
 import { useToast } from '../../hooks/toast';
-
-interface SignInFormData {
-  username: string;
-  password: string;
-}
+import User from '../../models/User';
 
 const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
@@ -29,7 +23,7 @@ const SignIn: React.FC = () => {
   const history = useHistory();
 
   const handleSubmit = useCallback(
-    async (data: SignInFormData) => {
+    async (data: User) => {
       try {
         formRef.current?.setErrors({});
 
@@ -47,7 +41,7 @@ const SignIn: React.FC = () => {
           password: data.password,
         });
 
-        history.push('/');
+        history.push('/dashboard');
       } catch (err: Yup.ValidationError | any) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
