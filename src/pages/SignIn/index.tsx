@@ -36,16 +36,17 @@ const SignIn: React.FC = () => {
           abortEarly: false,
         });
 
-        await signIn({
-          username: data.username,
-          password: data.password,
-        });
-
-        history.push('/dashboard');
+        if (
+          await signIn({
+            username: data.username,
+            password: data.password,
+          })
+        ) {
+          history.push('/dashboard');
+        }
       } catch (err: Yup.ValidationError | any) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
-
           formRef.current?.setErrors(errors);
 
           return;
