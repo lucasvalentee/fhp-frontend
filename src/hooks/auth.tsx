@@ -59,6 +59,13 @@ const AuthProvider: React.FC = ({ children }) => {
     setData({} as AuthState);
   }, []);
 
+  const refreshToken = useCallback((personCpf: string) => {
+    localStorage.setItem('@FHP:user', JSON.stringify(data.user));
+    localStorage.setItem('@FHP:token', data.token);
+    localStorage.setItem('@FHP:personCpf', personCpf);
+    setData({ user: data.user, token: data.token, personCpf });
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
@@ -66,6 +73,7 @@ const AuthProvider: React.FC = ({ children }) => {
         personCpf: data?.personCpf,
         signIn,
         signOut,
+        refreshToken,
       }}
     >
       {children}
