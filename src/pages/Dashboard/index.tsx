@@ -4,7 +4,9 @@ import { Link, Redirect, Switch } from 'react-router-dom';
 import VerticalMenu from '../../components/VerticalMenu';
 import { useAuth } from '../../hooks/auth';
 import MenuItem from '../../models/MenuItem';
+import User from '../../models/User';
 import Route from '../../routes/route';
+import UserService from '../../services/UserService';
 import PaymentMethods from '../PaymentMethods';
 import PersonalInformations from '../PersonalInformations';
 import ServiceLocations from '../ServiceLocations';
@@ -14,12 +16,19 @@ import { Container } from './styles';
 const Dashboard: React.FC = () => {
   const [redirect, setRedirect] = useState<string>();
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   const { user, personCpf } = useAuth();
 
   const PATH_PREFIX = '/dashboard';
 
   useEffect(() => {
+    async function findCurrentUser() {
+      setCurrentUser(await UserService.findUserByUsername(user.username));
+    }
+
+    findCurrentUser();
+
     const disable = !personCpf;
 
     setMenuItems([
