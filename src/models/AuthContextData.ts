@@ -6,4 +6,5 @@ export default interface AuthContextData {
   personCpf?: string;
   signIn(credentials: User): Promise<boolean>;
   signOut(): void;
+  refreshToken(cpf: string): void;
 }
