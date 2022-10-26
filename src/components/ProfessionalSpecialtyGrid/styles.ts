@@ -11,7 +11,6 @@ export const InputContainer = styled.div`
   div,
   input,
   option {
-    min-width: 50px;
     margin-top: 0;
 
     + div {
