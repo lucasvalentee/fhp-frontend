@@ -14,8 +14,6 @@ export default class UserService {
       console.log('[UserService.create] error -> ', { error });
       throw new Error(error.response.data.message);
     }
-
-    return false;
   }
 
   static async findUserByUsername(username: string): Promise<User | null> {

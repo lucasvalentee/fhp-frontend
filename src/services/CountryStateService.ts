@@ -15,8 +15,6 @@ export default class CountryStateService {
       console.log('[CountryStateService.findAll] error -> ', error);
       throw new Error(error.response.data.message);
     }
-
-    return [];
   }
 
   static async findById(id: number): Promise<CountryState | null> {
@@ -33,7 +31,5 @@ export default class CountryStateService {
       console.log('[CountryStateService.findById] error -> ', error);
       throw new Error(error.response.data.message);
     }
-
-    return null;
   }
 }
