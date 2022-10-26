@@ -10,13 +10,6 @@ export default class ProfessionalSpecialtyService {
     registerNumber,
   }: ProfessionalSpecialty): Promise<boolean> {
     try {
-      console.log({
-        specialtyId,
-        classEntity,
-        personCpf,
-        professionalId,
-        registerNumber,
-      });
       const response = await axios.post(
         `http://localhost:3333/professionals/specialties`,
         { specialtyId, classEntity, personCpf, professionalId, registerNumber },
