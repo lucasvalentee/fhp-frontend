@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import DataTable, { TableColumn } from 'react-data-table-component';
 import { Link } from 'react-router-dom';
 import Button from '../../components/Button';
 import { useAuth } from '../../hooks/auth';
+import { useToast } from '../../hooks/toast';
 import Professional from '../../models/Professional';
-import ProfessionalSpecialtyServiceLocation from '../../models/ProfessionalSpecialtyServiceLocation';
+import ServiceLocationModel from '../../models/ServiceLocation';
 import ProfessionalService from '../../services/ProfessionalService';
-import ProfessionalSpecialtyServiceLocationService from '../../services/ProfessionalSpecialtyServiceLocationService';
+import ServiceLocationService from '../../services/ServiceLocationService';
 import { Container, Content, NotFoundDataContainer } from './styles';
 
 interface ServiceLocationDataRow {
@@ -19,12 +20,42 @@ interface ServiceLocationDataRow {
 const ServiceLocation: React.FC = () => {
   const { personCpf } = useAuth();
   const [professional, setProfessional] = useState<Professional>();
-  const [
-    professionalSpecialtyServiceLocations,
-    setProfessionalSpecialtyServiceLocations,
-  ] = useState<ProfessionalSpecialtyServiceLocation[]>([]);
+  const [serviceLocations, setServiceLocations] = useState<
+    ServiceLocationModel[]
+  >([]);
+
+  const [reload, setReload] = useState<boolean>();
 
   const [data, setData] = useState<ServiceLocationDataRow[]>([]);
+
+  const { addToast } = useToast();
+
+  const onSuccessDelete = useCallback(() => {
+    setReload(true);
+    addToast({
+      type: 'success',
+      title: 'Sucesso',
+      description: 'Local de atuação excluído',
+    });
+  }, [addToast]);
+
+  const onErrorDelete = useCallback(() => {
+    addToast({
+      type: 'error',
+      title: 'Erro',
+      description:
+        'Ocorreu um erro ao excluir o local de atuação, tente novamente.',
+    });
+  }, [addToast]);
+
+  const handleDelete = useCallback(
+    async (id: string) => {
+      (await ServiceLocationService.delete(id))
+        ? onSuccessDelete()
+        : onErrorDelete();
+    },
+    [onErrorDelete, onSuccessDelete],
+  );
 
   const columns: TableColumn<ServiceLocationDataRow>[] = [
     {
@@ -42,7 +73,14 @@ const ServiceLocation: React.FC = () => {
     {
       name: 'Ações',
       button: true,
-      cell: () => <div>Ações!</div>,
+      cell: row => (
+        <div className="button-action-container">
+          <Link to={`/dashboard/locaisAtuacao/editar/${row.id}`}>Editar</Link>
+          <Button type="button" onClick={() => handleDelete(row.id)}>
+            Excluir
+          </Button>
+        </div>
+      ),
     },
   ];
 
@@ -58,41 +96,30 @@ const ServiceLocation: React.FC = () => {
   useEffect(() => {
     async function findAllServiceLocationsByProfessional() {
       if (professional && professional?.id) {
-        setProfessionalSpecialtyServiceLocations(
-          await ProfessionalSpecialtyServiceLocationService.findByProfessional(
-            professional.id,
-          ),
+        setServiceLocations(
+          await ServiceLocationService.findByProfessional(professional.id),
         );
       }
     }
 
     findAllServiceLocationsByProfessional();
-    console.log({ professional });
-  }, [professional]);
+  }, [professional, reload]);
 
   useEffect(() => {
-    if (!professionalSpecialtyServiceLocations.length) {
+    if (!serviceLocations.length) {
       setData([]);
       return;
     }
 
-    const dataTable = professionalSpecialtyServiceLocations.map(
-      professionalSpecialtyServiceLocation => ({
-        id: professionalSpecialtyServiceLocation.serviceLocation?.id || 'N/A',
-        countryState:
-          professionalSpecialtyServiceLocation.serviceLocation?.countryState
-            ?.name || 'N/A',
-        city:
-          professionalSpecialtyServiceLocation.serviceLocation?.city?.name ||
-          'N/A',
-        address:
-          professionalSpecialtyServiceLocation.serviceLocation?.address ||
-          'N/A',
-      }),
-    );
+    const dataTable = serviceLocations.map(location => ({
+      id: location?.id || 'N/A',
+      countryState: location?.countryState?.name || 'N/A',
+      city: location?.city?.name || 'N/A',
+      address: location?.address || 'N/A',
+    }));
 
     setData(dataTable);
-  }, [professionalSpecialtyServiceLocations]);
+  }, [serviceLocations]);
 
   return (
     <Container>

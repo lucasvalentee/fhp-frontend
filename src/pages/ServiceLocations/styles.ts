@@ -39,6 +39,28 @@ export const Content = styled.div`
       background: #4dab72;
     }
   }
+
+  .button-action-container {
+    display: flex;
+    flex-direction: column;
+
+    a {
+      background: #ffb67a;
+    }
+
+    button,
+    a {
+      margin-top: 5px;
+      font-weight: 800;
+      height: 30px;
+      width: 70px;
+      font-size: 10px;
+
+      + button {
+        margin-bottom: 5px;
+      }
+    }
+  }
 `;
 
 export const NotFoundDataContainer = styled.div`
