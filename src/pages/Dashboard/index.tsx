@@ -10,6 +10,7 @@ import UserService from '../../services/UserService';
 import PaymentMethods from '../PaymentMethods';
 import PersonalInformations from '../PersonalInformations';
 import ServiceLocations from '../ServiceLocations';
+import ServiceLocationsForm from '../ServiceLocationsForm';
 import Specialties from '../Specialties';
 import { Container } from './styles';
 
@@ -70,12 +71,22 @@ const Dashboard: React.FC = () => {
       </VerticalMenu>
       {redirect && <Redirect to={redirect} />}
       <Switch>
-        <Route path={`${PATH_PREFIX}`} exact component={PersonalInformations} />
+        <Route path={`${PATH_PREFIX}`} component={PersonalInformations} exact />
         <Route
           path={`${PATH_PREFIX}/dadosPessoais`}
           component={PersonalInformations}
         />
         <Route path={`${PATH_PREFIX}/especialidades`} component={Specialties} />
+        <Route
+          path={`${PATH_PREFIX}/locaisAtuacao/novo`}
+          component={ServiceLocationsForm}
+          exact
+        />
+        <Route
+          path={`${PATH_PREFIX}/locaisAtuacao/editar/:id`}
+          component={ServiceLocationsForm}
+          exact
+        />
         <Route
           path={`${PATH_PREFIX}/locaisAtuacao`}
           component={ServiceLocations}
