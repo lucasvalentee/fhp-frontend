@@ -1,6 +1,12 @@
 import axios from 'axios';
 import ProfessionalSpecialtyServiceLocation from '../models/ProfessionalSpecialtyServiceLocation';
 
+interface ProfessionalSpecialtyServiceLocationRelationProps {
+  personCpf: string;
+  professionalId: string;
+  specialties: string[];
+}
+
 export default class ProfessionalSpecialtyServiceLocationService {
   static async findByProfessional(
     professionalId: string,
@@ -11,6 +17,14 @@ export default class ProfessionalSpecialtyServiceLocationService {
       );
       const professionalSpecialtyServiceLocation = response.data;
 
+      const unique = Array.from(
+        new Set(
+          professionalSpecialtyServiceLocation.map(
+            item => item.serviceLocationId && item.serviceLocation,
+          ),
+        ),
+      );
+
       return professionalSpecialtyServiceLocation;
     } catch (error: Error | any) {
       console.log(
@@ -19,5 +33,17 @@ export default class ProfessionalSpecialtyServiceLocationService {
       );
       throw new Error(error.response.data.message);
     }
+  }
+
+  static createRelationObject({
+    personCpf,
+    professionalId,
+    specialties,
+  }: ProfessionalSpecialtyServiceLocationRelationProps): ProfessionalSpecialtyServiceLocation[] {
+    return specialties.map(specialtyId => ({
+      personCpf,
+      professionalId,
+      specialtyId,
+    }));
   }
 }
