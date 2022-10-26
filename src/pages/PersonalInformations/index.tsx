@@ -74,9 +74,9 @@ const PersonalInformations: React.FC = () => {
           userId,
         } = person;
 
-        setSelectedCountryState(person.countryStateId);
+        setSelectedCountryState(countryStateId);
 
-        setCities(await CityService.findByCountryState(person.countryStateId));
+        setCities(await CityService.findByCountryState(countryStateId));
 
         formRef.current?.setData({
           cpf,
