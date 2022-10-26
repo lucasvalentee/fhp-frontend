@@ -1,5 +1,6 @@
 import City from './City';
 import CountryState from './CountryState';
+import ProfessionalSpecialtyServiceLocation from './ProfessionalSpecialtyServiceLocation';
 
 export default interface ServiceLocation {
   id?: string;
@@ -11,6 +12,8 @@ export default interface ServiceLocation {
   complement?: string;
   phoneNumber: string;
   medicalInsurance: string;
+  paymentMethods?: string[];
   countryState?: CountryState;
   city?: City;
+  professionalSpecialtyServiceLocation?: ProfessionalSpecialtyServiceLocation[];
 }
