@@ -6,12 +6,23 @@ export const Container = styled.nav`
   height: 100vh;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   width: 340px;
   background-color: #eff3f8;
 
   .menuItemActive {
     background-color: #e4e9ef;
   }
+`;
+
+export const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const Footer = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 export const StyledNavLink = styled(NavLink)`
@@ -41,7 +52,6 @@ export const DisabledNavLink = styled.div`
 `;
 
 export const LogoutButton = styled(Link)`
-  position: fixed;
   bottom: 0;
   height: 60px;
   width: 340px;

@@ -17,19 +17,12 @@ import { Container } from './styles';
 const Dashboard: React.FC = () => {
   const [redirect, setRedirect] = useState<string>();
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   const { user, personCpf } = useAuth();
 
   const PATH_PREFIX = '/dashboard';
 
   useEffect(() => {
-    async function findCurrentUser() {
-      setCurrentUser(await UserService.findUserByUsername(user.username));
-    }
-
-    findCurrentUser();
-
     const disable = !personCpf;
 
     setMenuItems([
@@ -42,11 +35,6 @@ const Dashboard: React.FC = () => {
       {
         title: 'Locais de Atuação',
         linkTo: `${PATH_PREFIX}/locaisAtuacao`,
-        disable,
-      },
-      {
-        title: 'Métodos de Pagamento',
-        linkTo: `${PATH_PREFIX}/metodosPagamento`,
         disable,
       },
     ]);
@@ -64,10 +52,19 @@ const Dashboard: React.FC = () => {
         className="dashboardMenu"
         useLogoutButton
       >
-        <Link to="/">
+        <Link className="arrowLeft" to="/">
           <FiArrowLeft />
           Voltar para o início
         </Link>
+
+        <hr
+          style={{
+            background: '#0000001f',
+            border: 'none',
+            height: '2px',
+            marginTop: '24px',
+          }}
+        />
       </VerticalMenu>
       {redirect && <Redirect to={redirect} />}
       <Switch>
@@ -90,10 +87,6 @@ const Dashboard: React.FC = () => {
         <Route
           path={`${PATH_PREFIX}/locaisAtuacao`}
           component={ServiceLocations}
-        />
-        <Route
-          path={`${PATH_PREFIX}/metodosPagamento`}
-          component={PaymentMethods}
         />
       </Switch>
     </Container>
