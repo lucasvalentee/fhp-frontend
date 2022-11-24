@@ -1,5 +1,4 @@
 import axios from 'axios';
-import City from '../models/City';
 import Specialty from '../models/Specialty';
 
 export default class SpecialtyService {
@@ -16,7 +15,5 @@ export default class SpecialtyService {
       console.log('[SpecialtyService.findAll] error -> ', error);
       throw new Error(error.response.data.message);
     }
-
-    return [];
   }
 }

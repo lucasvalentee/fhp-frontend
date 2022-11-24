@@ -29,7 +29,5 @@ export default class UserService {
       console.log('[UserService.create] error -> ', { error });
       throw new Error(error.response.data.message);
     }
-
-    return null;
   }
 }
