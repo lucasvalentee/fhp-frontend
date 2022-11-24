@@ -4,12 +4,30 @@ export const Container = styled.div`
   height: 100vh;
   display: flex;
   align-items: stretch;
+  flex-direction: column;
+`;
+
+export const Content = styled.div`
+  padding: 16px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+
+  button.startChat {
+    background: #56be7f;
+    width: 50%;
+
+    &:hover {
+      background: #4dab72;
+    }
+  }
 `;
 
 export const Header = styled.div`
   width: 100%;
   height: 100px;
-  background: #eff3f8;
+  background: #eff3f8;a
   padding: 12px;
   display: flex;
   flex-direction: row;
@@ -83,5 +101,3 @@ export const UserButtonContainer = styled.div`
     height: auto;
   }
 `;
-
-export const Content = styled.div``;

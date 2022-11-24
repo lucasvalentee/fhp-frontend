@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Link, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import {
   Container,
   Header,
@@ -16,9 +16,11 @@ import {
 import medicalIcon from '../../assets/healthcare_hospital_medical_icon.png';
 import Button from '../../components/Button';
 import { useAuth } from '../../hooks/auth';
+import Chatbot from '../../components/Chatbot';
 
 const Main: React.FC = () => {
   const [redirect, setRedirect] = useState<string>();
+  const [showChatbot, setShowChatbot] = useState<boolean>(false);
 
   const { user, signOut } = useAuth();
 
@@ -57,6 +59,29 @@ const Main: React.FC = () => {
           )}
         </HeaderButtons>
       </Header>
+
+      <Content>
+        {!showChatbot ? (
+          <>
+            <h2>Bem vindo ao FHP - Find Your Health Professional</h2>
+
+            <p>
+              Aqui você poderá entrar em contato com nosso bot e encontrar
+              profissionais da saúde conversando diretamente com ele!
+            </p>
+
+            <Button
+              className="startChat"
+              type="button"
+              onClick={() => setShowChatbot(true)}
+            >
+              Iniciar chat
+            </Button>
+          </>
+        ) : (
+          <Chatbot />
+        )}
+      </Content>
     </Container>
   );
 };
