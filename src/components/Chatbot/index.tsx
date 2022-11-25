@@ -1,13 +1,16 @@
-import { createRef, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { FiMail } from 'react-icons/fi';
+import BotService from '../../services/BotService';
 import Button from '../Button';
 import {
+  BotAvatar,
   BotBoxMessage,
   BotBoxMessageContainer,
   ChatHistory,
   ChatInput,
   Container,
   Content,
+  UserAvatar,
   UserBoxMessage,
   UserBoxMessageContainer,
 } from './styles';
@@ -22,6 +25,21 @@ const Chatbot: React.FC = () => {
   const [messageToBeProcessed, setMessageToBeProcessed] = useState('');
   const [processBotMessage, setProcessBotMessage] = useState(false);
   const [chatMessage, setChatMessage] = useState<ChatMessage[]>([]);
+
+  useEffect(() => {
+    async function startConversation() {
+      const botResponse = await BotService.startConversation();
+
+      setChatMessage([
+        {
+          message: botResponse.answer,
+          type: 'bot',
+        } as ChatMessage,
+      ]);
+    }
+
+    startConversation();
+  }, []);
 
   const sendMessage = useCallback(() => {
     if (!message) {
@@ -50,18 +68,18 @@ const Chatbot: React.FC = () => {
 
     setProcessBotMessage(false);
 
-    function process() {
+    async function process() {
+      const botResponse = await BotService.processMessage(messageToBeProcessed);
+
       setChatMessage([
         ...chatMessage,
         ...[
           {
-            message: 'Resposta do bot',
+            message: botResponse.answer,
             type: 'bot',
           } as ChatMessage,
         ],
       ]);
-
-      return 'ok';
     }
 
     process();
@@ -90,12 +108,14 @@ const Chatbot: React.FC = () => {
             chatMessage.map((chatHistory, index) =>
               chatHistory.type === 'bot' ? (
                 <BotBoxMessageContainer key={`bot_message_${index}`}>
+                  <BotAvatar />
                   <BotBoxMessage>
                     <p>{chatHistory.message}</p>
                   </BotBoxMessage>
                 </BotBoxMessageContainer>
               ) : (
                 <UserBoxMessageContainer key={`user_message_${index}`}>
+                  <UserAvatar />
                   <UserBoxMessage>
                     <p>{chatHistory.message}</p>
                   </UserBoxMessage>
