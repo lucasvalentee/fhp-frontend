@@ -15,8 +15,6 @@ export default class CityService {
       console.log('[CityService.findById] error -> ', error);
       throw new Error(error.response.data.message);
     }
-
-    return null;
   }
 
   static async findByCountryState(countryStateId: number): Promise<City[]> {
@@ -32,7 +30,5 @@ export default class CityService {
       console.log('[CityService.findByCountryState] error -> ', error);
       throw new Error(error.response.data.message);
     }
-
-    return [];
   }
 }

@@ -37,8 +37,6 @@ export default class PersonService {
       console.log('[PersonService.create] error -> ', { error });
       throw new Error(error.response.data.message);
     }
-
-    return false;
   }
 
   static async update({
@@ -90,7 +88,5 @@ export default class PersonService {
       console.log('[PersonService.findByCpf] error -> ', { error });
       throw new Error(error.response.data.message);
     }
-
-    return null;
   }
 }
