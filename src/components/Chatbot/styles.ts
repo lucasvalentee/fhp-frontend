@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import doctorAvatar from '../../assets/avatar_doctor.svg';
+import userAvatar from '../../assets/user_avatar.svg';
 
 export const Container = styled.div`
   display: flex;
@@ -61,7 +63,7 @@ export const BotBoxMessageContainer = styled.div`
 
 export const BotBoxMessage = styled.div`
   background: #cdcdcd;
-  padding: 8px;
+  padding: 10px;
   border-radius: 15px;
   max-width: 75%;
   min-height: 40px;
@@ -72,17 +74,37 @@ export const BotBoxMessage = styled.div`
 
 export const UserBoxMessageContainer = styled.div`
   display: flex;
-  flex-direction: reverse-row;
-  justify-content: flex-end;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+  align-items: flex-start;
 `;
 
 export const UserBoxMessage = styled.div`
   background: #cdcdcd;
-  padding: 8px;
+  padding: 10px;
   border-radius: 15px;
   max-width: 75%;
   min-height: 40px;
   text-align: right;
   font-size: 14px;
   margin-bottom: 16px;
+`;
+
+export const BotAvatar = styled.div`
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: url(${doctorAvatar}) no-repeat center;
+  background-size: cover;
+  margin-right: 8px;
+`;
+
+export const UserAvatar = styled.div`
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: url(${userAvatar}) no-repeat center;
+  background-size: cover;
+  margin-top: -5px;
+  margin-left: 8px;
 `;
