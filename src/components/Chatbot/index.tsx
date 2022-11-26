@@ -1,7 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { FormHandles } from '@unform/core';
+import { createRef, useCallback, useEffect, useRef, useState } from 'react';
 import { FiMail } from 'react-icons/fi';
+import * as Yup from 'yup';
+import ChatbotRegionFormDTO from '../../models/ChatbotRegionFormDTO';
 import BotService from '../../services/BotService';
+import getValidationErrors from '../../utils/getValidationErrors';
 import Button from '../Button';
+import ChatbotRegionForm from '../ChatbotRegionForm';
 import {
   BotAvatar,
   BotBoxMessage,
@@ -10,6 +15,8 @@ import {
   ChatInput,
   Container,
   Content,
+  MessageContainer,
+  OptionsContainer,
   UserAvatar,
   UserBoxMessage,
   UserBoxMessageContainer,
@@ -18,6 +25,7 @@ import {
 interface ChatMessage {
   message: string;
   type: 'bot' | 'user';
+  options?: string[];
 }
 
 const Chatbot: React.FC = () => {
@@ -25,15 +33,27 @@ const Chatbot: React.FC = () => {
   const [messageToBeProcessed, setMessageToBeProcessed] = useState('');
   const [processBotMessage, setProcessBotMessage] = useState(false);
   const [chatMessage, setChatMessage] = useState<ChatMessage[]>([]);
+  const chatbotRegionFormRef = useRef<FormHandles[]>([]);
+
+  const chatHistoryRef = createRef<HTMLDivElement>();
+
+  useEffect(() => {
+    if (chatHistoryRef.current?.scrollHeight) {
+      chatHistoryRef.current.scrollTo({
+        top: chatHistoryRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }, [chatHistoryRef, chatMessage]);
 
   useEffect(() => {
     async function startConversation() {
       const botResponse = await BotService.startConversation();
-
       setChatMessage([
         {
           message: botResponse.answer,
           type: 'bot',
+          options: botResponse.options,
         } as ChatMessage,
       ]);
     }
@@ -77,6 +97,7 @@ const Chatbot: React.FC = () => {
           {
             message: botResponse.answer,
             type: 'bot',
+            options: botResponse?.options,
           } as ChatMessage,
         ],
       ]);
@@ -100,21 +121,76 @@ const Chatbot: React.FC = () => {
     [sendMessage],
   );
 
+  const handleSubmitRegionForm = useCallback(
+    async (data: ChatbotRegionFormDTO, formRef: FormHandles) => {
+      try {
+        formRef.setErrors({});
+
+        const schema = Yup.object().shape({
+          countryStateId: Yup.string().required('O estado é obrigatório'),
+          cityId: Yup.string().required('A cidade é obrigatória'),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        const botResponse = await BotService.processRegion(data);
+
+        setChatMessage([
+          ...chatMessage,
+          ...[
+            {
+              message: botResponse.answer,
+              type: 'bot',
+              options: botResponse?.options,
+            } as ChatMessage,
+          ],
+        ]);
+      } catch (err: Yup.ValidationError | any) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+          formRef.setErrors(errors);
+        }
+      }
+    },
+    [chatMessage],
+  );
+
   return (
     <Container>
       <Content>
-        <ChatHistory>
+        <ChatHistory ref={chatHistoryRef}>
           {chatMessage &&
             chatMessage.map((chatHistory, index) =>
               chatHistory.type === 'bot' ? (
-                <BotBoxMessageContainer key={`bot_message_${index}`}>
-                  <BotAvatar />
-                  <BotBoxMessage>
-                    <p>{chatHistory.message}</p>
-                  </BotBoxMessage>
+                <BotBoxMessageContainer key={`BotBoxMessageContainer_${index}`}>
+                  <MessageContainer>
+                    <BotAvatar />
+                    <BotBoxMessage>
+                      <p>{chatHistory.message}</p>
+                    </BotBoxMessage>
+                  </MessageContainer>
+
+                  <OptionsContainer>
+                    {chatHistory?.options &&
+                      chatHistory?.options.map((option, id) =>
+                        option === 'showRegionInputs' ? (
+                          <ChatbotRegionForm
+                            key={`ChatbotRegionForm_${id}`}
+                            inputRef={chatbotRegionFormRef?.current[id]}
+                            handleSubmit={handleSubmitRegionForm}
+                          />
+                        ) : (
+                          ''
+                        ),
+                      )}
+                  </OptionsContainer>
                 </BotBoxMessageContainer>
               ) : (
-                <UserBoxMessageContainer key={`user_message_${index}`}>
+                <UserBoxMessageContainer
+                  key={`UserBoxMessageContainer_${index}`}
+                >
                   <UserAvatar />
                   <UserBoxMessage>
                     <p>{chatHistory.message}</p>

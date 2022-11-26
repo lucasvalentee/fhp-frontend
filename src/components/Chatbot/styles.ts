@@ -57,7 +57,7 @@ export const ChatInput = styled.div`
 
 export const BotBoxMessageContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: flex-start;
 `;
 
@@ -107,4 +107,16 @@ export const UserAvatar = styled.div`
   background-size: cover;
   margin-top: -5px;
   margin-left: 8px;
+`;
+
+export const MessageContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+`;
+
+export const OptionsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 `;
