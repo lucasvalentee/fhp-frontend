@@ -181,18 +181,6 @@ const Chatbot: React.FC = () => {
                   </MessageContainer>
 
                   <OptionsContainer>
-                    {/* TODO: Fazer o checkbox do LGPD */}
-                    {/* TODO: Fazer o checkbox do LGPD */}
-                    {/* TODO: Fazer o checkbox do LGPD */}
-                    {/* TODO: Fazer o checkbox do LGPD */}
-                    {/* TODO: Fazer o checkbox do LGPD */}
-                    {/* TODO: Fazer o checkbox do LGPD */}
-
-                    {/* TODO: Arrumar os botoes de voltar e remover o esqueci minha senha */}
-                    {/* TODO: Arrumar os botoes de voltar e remover o esqueci minha senha */}
-                    {/* TODO: Arrumar os botoes de voltar e remover o esqueci minha senha */}
-                    {/* TODO: Arrumar os botoes de voltar e remover o esqueci minha senha */}
-
                     {chatHistory?.options &&
                       chatHistory?.options.map((option, id) =>
                         option === 'showRegionInputs' ? (
