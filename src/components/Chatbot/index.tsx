@@ -2,10 +2,12 @@ import { FormHandles } from '@unform/core';
 import { createRef, useCallback, useEffect, useRef, useState } from 'react';
 import { FiMail } from 'react-icons/fi';
 import * as Yup from 'yup';
+import CardData from '../../models/CardData';
 import ChatbotRegionFormDTO from '../../models/ChatbotRegionFormDTO';
 import BotService from '../../services/BotService';
 import getValidationErrors from '../../utils/getValidationErrors';
 import Button from '../Button';
+import ChatbotCardData from '../ChatbotCardData';
 import ChatbotRegionForm from '../ChatbotRegionForm';
 import {
   BotAvatar,
@@ -26,6 +28,7 @@ interface ChatMessage {
   message: string;
   type: 'bot' | 'user';
   options?: string[];
+  cardData?: CardData[];
 }
 
 const Chatbot: React.FC = () => {
@@ -54,7 +57,8 @@ const Chatbot: React.FC = () => {
         {
           message: botResponse.answer,
           type: 'bot',
-          options: botResponse.options,
+          options: botResponse?.options,
+          cardData: botResponse?.cardData,
         } as ChatMessage,
       ]);
     }
@@ -102,6 +106,7 @@ const Chatbot: React.FC = () => {
             message: botResponse.answer,
             type: 'bot',
             options: botResponse?.options,
+            cardData: botResponse?.cardData,
           } as ChatMessage,
         ],
       ]);
@@ -176,6 +181,18 @@ const Chatbot: React.FC = () => {
                   </MessageContainer>
 
                   <OptionsContainer>
+                    {/* TODO: Fazer o checkbox do LGPD */}
+                    {/* TODO: Fazer o checkbox do LGPD */}
+                    {/* TODO: Fazer o checkbox do LGPD */}
+                    {/* TODO: Fazer o checkbox do LGPD */}
+                    {/* TODO: Fazer o checkbox do LGPD */}
+                    {/* TODO: Fazer o checkbox do LGPD */}
+
+                    {/* TODO: Arrumar os botoes de voltar e remover o esqueci minha senha */}
+                    {/* TODO: Arrumar os botoes de voltar e remover o esqueci minha senha */}
+                    {/* TODO: Arrumar os botoes de voltar e remover o esqueci minha senha */}
+                    {/* TODO: Arrumar os botoes de voltar e remover o esqueci minha senha */}
+
                     {chatHistory?.options &&
                       chatHistory?.options.map((option, id) =>
                         option === 'showRegionInputs' ? (
@@ -183,6 +200,12 @@ const Chatbot: React.FC = () => {
                             key={`ChatbotRegionForm_${id}`}
                             inputRef={chatbotRegionFormRef?.current[id]}
                             handleSubmit={handleSubmitRegionForm}
+                          />
+                        ) : option === 'showProfessionalData' ? (
+                          <ChatbotCardData
+                            key={`ChatbotCardData_${id}`}
+                            data={chatHistory?.cardData || []}
+                            index={index}
                           />
                         ) : (
                           ''
