@@ -29,13 +29,14 @@ interface ChatMessage {
 }
 
 const Chatbot: React.FC = () => {
-  const [message, setMessage] = useState('');
   const [messageToBeProcessed, setMessageToBeProcessed] = useState('');
   const [processBotMessage, setProcessBotMessage] = useState(false);
   const [chatMessage, setChatMessage] = useState<ChatMessage[]>([]);
   const chatbotRegionFormRef = useRef<FormHandles[]>([]);
 
   const chatHistoryRef = createRef<HTMLDivElement>();
+
+  const chatInputRef = createRef<HTMLTextAreaElement>();
 
   useEffect(() => {
     if (chatHistoryRef.current?.scrollHeight) {
@@ -62,9 +63,13 @@ const Chatbot: React.FC = () => {
   }, []);
 
   const sendMessage = useCallback(() => {
-    if (!message) {
+    if (!chatInputRef.current?.value) {
       return;
     }
+
+    const message = chatInputRef.current?.value;
+
+    chatInputRef.current.value = '';
 
     setChatMessage([
       ...chatMessage,
@@ -78,8 +83,7 @@ const Chatbot: React.FC = () => {
 
     setProcessBotMessage(true);
     setMessageToBeProcessed(message);
-    setMessage('');
-  }, [chatMessage, message]);
+  }, [chatMessage, chatInputRef]);
 
   useEffect(() => {
     if (!processBotMessage || !messageToBeProcessed) {
@@ -113,7 +117,6 @@ const Chatbot: React.FC = () => {
         event.preventDefault();
 
         if (event.target.value !== '') {
-          setMessage(event.target.value);
           sendMessage();
         }
       }
@@ -201,11 +204,7 @@ const Chatbot: React.FC = () => {
         </ChatHistory>
         <ChatInput>
           <FiMail size={20} />
-          <textarea
-            value={message}
-            onChange={event => setMessage(event.target.value)}
-            onKeyDown={e => handleKeyDown(e)}
-          />
+          <textarea ref={chatInputRef} onKeyDown={e => handleKeyDown(e)} />
           <Button type="button" onClick={() => sendMessage()}>
             Enviar
           </Button>
