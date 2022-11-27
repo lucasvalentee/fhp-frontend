@@ -88,3 +88,24 @@ export const Background = styled.div`
   background: url(${signUpBackgroundImg}) no-repeat center;
   background-size: cover;
 `;
+
+export const CheckboxContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  font-size: 12px;
+`;
+
+export const Checkbox = styled.input`
+  margin-right: 8px;
+  margin-top: 2px;
+`;
+
+export const CheckboxText = styled.div`
+  text-align: left;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;

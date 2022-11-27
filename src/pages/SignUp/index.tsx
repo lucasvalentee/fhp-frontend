@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { FiArrowLeft, FiMail, FiLock, FiUser } from 'react-icons/fi';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -9,7 +9,15 @@ import { useToast } from '../../hooks/toast';
 
 import logoImg from '../../assets/logo.svg';
 
-import { Container, Content, Background, AnimationContainer } from './styles';
+import {
+  Container,
+  Content,
+  Background,
+  AnimationContainer,
+  Checkbox,
+  CheckboxContainer,
+  CheckboxText,
+} from './styles';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -22,7 +30,9 @@ const SignUp: React.FC = () => {
   const { addToast } = useToast();
   const history = useHistory();
 
-  const onSuccess = () => {
+  const [checked, setChecked] = useState<boolean>(false);
+
+  const onSuccess = useCallback(() => {
     history.push('/signin');
 
     addToast({
@@ -30,15 +40,15 @@ const SignUp: React.FC = () => {
       title: 'Cadastro realizado!',
       description: 'Você já pode fazer seu login no FHP.',
     });
-  };
+  }, [addToast, history]);
 
-  const onError = () => {
+  const onError = useCallback(() => {
     addToast({
       type: 'error',
       title: 'Erro no cadastro',
       description: 'Ocorreu um erro ao realizar seu cadastro, tente novamente.',
     });
-  };
+  }, [addToast]);
 
   const handleSubmit = useCallback(
     async (data: User) => {
@@ -49,6 +59,15 @@ const SignUp: React.FC = () => {
           username: Yup.string().required('Nome obrigatório'),
           password: Yup.string().min(6, 'No mínimo 6 dígitos'),
         });
+
+        if (!checked) {
+          addToast({
+            type: 'error',
+            title: 'Aceite os termos',
+            description:
+              'Para realizar seu cadastro, você precisa aceitar os termos do aplicativo.',
+          });
+        }
 
         await schema.validate(data, {
           abortEarly: false,
@@ -69,7 +88,7 @@ const SignUp: React.FC = () => {
         onError();
       }
     },
-    [addToast, history],
+    [addToast, checked, onError, onSuccess],
   );
 
   return (
@@ -89,12 +108,30 @@ const SignUp: React.FC = () => {
               placeholder="Senha"
             />
 
+            <CheckboxContainer>
+              <Checkbox
+                type="checkbox"
+                checked={checked}
+                onChange={() => setChecked(!checked)}
+              />
+              <CheckboxText onClick={() => setChecked(!checked)}>
+                Ao clicar em cadastrar, eu concordo que ao vincular minhas
+                informações profissionais os dados ficarão visíveis no chatbot
+                de forma pública.
+              </CheckboxText>
+            </CheckboxContainer>
+
             <Button type="submit">Cadastrar</Button>
           </Form>
 
-          <Link to="/">
+          <Link to="/signin">
             <FiArrowLeft />
             Voltar para logon
+          </Link>
+
+          <Link to="/">
+            <FiArrowLeft />
+            Voltar para o início
           </Link>
         </AnimationContainer>
       </Content>
