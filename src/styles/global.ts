@@ -8,6 +8,10 @@ export default createGlobalStyle`
     outline: 0;
   }
 
+  body, html {
+    height: 100%;
+  }
+
   body {
     background: #FBFBFB;
     color: #312E38;
@@ -26,5 +30,9 @@ export default createGlobalStyle`
 
   button {
     cursor: pointer;
+  }
+
+  #root {
+    height: 100%
   }
 `;
