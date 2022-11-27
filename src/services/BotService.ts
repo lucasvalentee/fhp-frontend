@@ -53,7 +53,7 @@ class BotService {
 
       return botResponse;
     } catch (error: Error | any) {
-      console.log('[BotService.processMessage] error -> ', error);
+      console.log('[BotService.processRegion] error -> ', error);
       throw new Error(error.response.data.message);
     }
   }
